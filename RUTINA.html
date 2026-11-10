@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Rutina Diaria</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #101827;
+    color: white;
+    padding: 20px;
+}
+
+.contenedor {
+    max-width: 420px;
+    margin: auto;
+    background: #1c293d;
+    padding: 20px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px #0007;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+header h1 {
+    color: #55d6ff;
+    font-size: 27px;
+}
+
+header p {
+    color: #b8c8da;
+    margin-top: 8px;
+}
+
+.reloj {
+    background: #101827;
+    padding: 18px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.reloj h2 {
+    color: #55d6ff;
+    font-size: 30px;
+}
+
+.progreso {
+    background: #35445a;
+    height: 9px;
+    border-radius: 20px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.barra {
+    background: #19c9a0;
+    height: 100%;
+    width: 0%;
+    transition: 0.3s;
+}
+
+.actividad {
+    background: #293950;
+    padding: 15px;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    border-left: 4px solid #55d6ff;
+}
+
+.actividad.completa {
+    opacity: 0.55;
+    border-left-color: #19c9a0;
+}
+
+.actividad input {
+    width: 19px;
+    height: 19px;
+    accent-color: #19c9a0;
+}
+
+.info {
+    flex: 1;
+}
+
+.info h3 {
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.info p {
+    color: #aebdd0;
+    font-size: 12px;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: #168dbe;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 12px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #08729e;
+}
+
+footer {
+    text-align: center;
+    color: #9aacc1;
+    font-size: 12px;
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+<header>
+    <h1>📅 Mi Rutina Diaria</h1>
+    <p>Organiza tu día y alcanza tus metas</p>
+</header>
+
+<div class="reloj">
+    <p>MI JORNADA DIARIA</p>
+    <h2>06:00 AM - 06:00 PM</h2>
+    <p id="contador">0 de 14 actividades completadas</p>
+
+    <div class="progreso">
+        <div class="barra" id="barra"></div>
+    </div>
+</div>
+
+<div id="lista"></div>
+
+<button onclick="reiniciar()">🔄 Reiniciar rutina</button>
+
+<footer>
+    Mi disciplina construye mi futuro 🚀
+</footer>
+
+</div>
+
+<script>
+
+const actividades = [
+["6:00 - 6:30 AM","🌅","Levantarse y aseo personal"],
+["6:30 - 7:00 AM","🥪","Desayunar"],
+["7:00 - 8:00 AM","📚","Estudiar y repasar cursos"],
+["8:00 - 9:00 AM","✍️","Realizar tareas escolares"],
+["9:00 - 9:30 AM","☕","Descanso y refrigerio"],
+["9:30 - 10:30 AM","💡","Aprender algo nuevo"],
+["10:30 - 11:30 AM","💻","Practicar programación"],
+["11:30 - 12:00 PM","🎮","Tiempo libre"],
+["12:00 - 1:00 PM","🍽️","Almorzar y descansar"],
+["1:00 - 2:00 PM","🏠","Actividades personales"],
+["2:00 - 3:00 PM","⚽","Ejercicio o practicar fútbol"],
+["3:00 - 4:00 PM","🚿","Ducha y merienda"],
+["4:00 - 5:00 PM","📝","Terminar tareas pendientes"],
+["5:00 - 6:00 PM","👨‍👩‍👦","Recreación y tiempo familiar"]
+];
+
+const lista = document.getElementById("lista");
+
+actividades.forEach((actividad, i) => {
+
+    const elemento = document.createElement("div");
+    elemento.className = "actividad";
+
+    elemento.innerHTML = `
+        <input type="checkbox" onchange="actualizar(this)">
+        <div class="info">
+            <h3>${actividad[1]} ${actividad[2]}</h3>
+            <p>${actividad[0]}</p>
+        </div>
+    `;
+
+    lista.appendChild(elemento);
+});
+
+function actualizar(input) {
+    const elemento = input.parentElement;
+
+    elemento.classList.toggle("completa", input.checked);
+
+    const checks = document.querySelectorAll(
+        '#lista input[type="checkbox"]'
+    );
+
+    const completadas = [...checks].filter(
+        check => check.checked
+    ).length;
+
+    document.getElementById("contador").textContent =
+        `${completadas} de ${actividades.length} actividades completadas`;
+
+    document.getElementById("barra").style.width =
+        (completadas / actividades.length * 100) + "%";
+}
+
+function reiniciar() {
+    const checks = document.querySelectorAll(
+        '#lista input[type="checkbox"]'
+    );
+
+    checks.forEach(check => {
+        check.checked = false;
+        check.parentElement.classList.remove("completa");
+    });
+
+    document.getElementById("contador").textContent =
+        `0 de ${actividades.length} actividades completadas`;
+
+    document.getElementById("barra").style.width = "0%";
+}
+
+</script>
+
+</body>
+</html>
